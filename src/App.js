@@ -1,7 +1,6 @@
 import "./App.css";
 import { ThemeProvider, CssBaseline } from "@material-ui/core";
 import { useEffect, useState } from "react";
-import { Category as CategoryIcon } from "@material-ui/icons";
 import { Sidebar, Content, Header } from "./components";
 import "fontsource-roboto";
 import { useStyles, theme } from "./utils/styles";
@@ -11,18 +10,23 @@ const App = () => {
 
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openCategory, setOpenCategory] = useState("Home");
-  const [categoriesList, setCategoriesList] = useState([]);
   const [categoriesToDoListMap, setCategoriesToDoListMap] = useState({});
 
-  useEffect(() => console.log(localStorage?.energiToDo), [localStorage]);
+  useEffect(() => {
+    if (categoriesToDoListMap && Object.keys(categoriesToDoListMap)?.length) {
+      localStorage.setItem(
+        "categoriesToDoListMap",
+        JSON.stringify(categoriesToDoListMap)
+      );
+    }
+  }, [categoriesToDoListMap]);
 
   useEffect(() => {
-    if (categoriesList || setCategoriesToDoListMap)
-      localStorage.setItem("energiToDo", {
-        categoriesList: categoriesList,
-        categoriesToDoListMap: categoriesToDoListMap,
-      });
-  }, [categoriesList, categoriesToDoListMap]);
+    setCategoriesToDoListMap({
+      Home: [],
+      ...JSON.parse(localStorage.getItem("categoriesToDoListMap")),
+    });
+  }, []);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -34,14 +38,12 @@ const App = () => {
   };
 
   const addCategory = (label) => {
-    if (label && categoriesList.findIndex((i) => i.label === label) < 0) {
-      setCategoriesList([
-        {
-          label: label,
-          icon: <CategoryIcon style={{ fill: "white" }} />,
-        },
-        ...categoriesList,
-      ]);
+    if (
+      label &&
+      Object.keys(categoriesToDoListMap).findIndex(
+        (i) => i.toLowerCase() === label.toLowerCase()
+      ) < 0
+    ) {
       setCategoriesToDoListMap({
         ...categoriesToDoListMap,
         [label]: [],
@@ -54,11 +56,6 @@ const App = () => {
     let state = { ...categoriesToDoListMap };
     delete state[item];
     setCategoriesToDoListMap(state);
-    categoriesList.splice(
-      categoriesList.findIndex((i) => i.label === item.label),
-      1
-    );
-    setCategoriesList(categoriesList);
   };
 
   const addToDo = (val) => {
@@ -84,16 +81,16 @@ const App = () => {
       <CssBaseline />
       <Header
         appClasses={classes}
-        categoriesList={categoriesList}
+        categoriesList={Object.keys(categoriesToDoListMap)}
         toggleDrawer={toggleDrawer}
-        addDefaultCategories={(arr) => setCategoriesList(arr)}
+        addDefaultCategories={(arr) => addCategory(arr)}
       />
       <Sidebar
         open={openDrawer}
         toggleDrawer={toggleDrawer}
-        categorySelected={(item) => setOpenCategory(item.label)}
+        categorySelected={(item) => setOpenCategory(item)}
         deleteCategory={deleteCategory}
-        categories={categoriesList}
+        categories={Object.keys(categoriesToDoListMap)}
         openCategory={openCategory}
       />
       <Content

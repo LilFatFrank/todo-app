@@ -1,13 +1,7 @@
-import {
-  AppBar,
-  IconButton,
-  Toolbar,
-  Typography,
-  Tooltip,
-} from "@material-ui/core";
+import { AppBar, IconButton, Toolbar, Typography } from "@material-ui/core";
 import { Menu } from "@material-ui/icons";
 import clsx from "clsx";
-import { DefaultCategories } from "../../utils/DefaultCategories";
+import RenderIcons from "../RenderIcons/RenderIcons";
 
 const Header = ({
   toggleDrawer,
@@ -27,18 +21,21 @@ const Header = ({
         </div>
         <div className={clsx(appClasses.flex, appClasses.alignCenter)}>
           <Typography variant={"h6"}>Add categories:</Typography>
-          {DefaultCategories.map((category, index) => (
-            <Tooltip key={index} title={category.label}>
-              <IconButton
-                onClick={() => addDefaultCategories([...categoriesList, category])}
-                disabled={
-                  categoriesList.findIndex((c) => c.label === category.label) >
-                  -1
+          {["Urgent", "Important", "Later"].map((category, index) => (
+            <IconButton
+              onClick={() => addDefaultCategories(category)}
+              disabled={categoriesList.findIndex((c) => c === category) > -1}
+              key={`${category}-${index}`}
+            >
+              <RenderIcons
+                label={category}
+                fill={
+                  categoriesList.findIndex((c) => c === category) > -1
+                    ? "#0b2533"
+                    : ""
                 }
-              >
-                {category.icon}
-              </IconButton>
-            </Tooltip>
+              />
+            </IconButton>
           ))}
         </div>
       </Toolbar>

@@ -7,8 +7,9 @@ import {
   makeStyles,
   ListItemSecondaryAction,
 } from "@material-ui/core";
-import { Home, Delete } from "@material-ui/icons";
+import { Delete } from "@material-ui/icons";
 import clsx from "clsx";
+import { RenderIcons } from "..";
 
 const useStyles = makeStyles({
   list: {
@@ -47,19 +48,18 @@ const Sidebar = ({
         onKeyDown={toggleDrawer(false)}
       >
         <List>
-          {[
-            { label: "Home", icon: <Home style={{ color: "white" }} /> },
-            ...categories,
-          ].map((item, index) => (
+          {[...categories].map((item, index) => (
             <ListItem
               button
-              key={item.label}
+              key={item}
               onClick={() => categorySelected(item)}
               className={classes.color}
             >
-              <ListItemIcon>{item.icon}</ListItemIcon>
-              <ListItemText primary={item.label} />
-              {index !== 0 && item.label !== openCategory ? (
+              <ListItemIcon>
+                <RenderIcons label={item} />
+              </ListItemIcon>
+              <ListItemText primary={item} />
+              {index !== 0 && item !== openCategory ? (
                 <ListItemSecondaryAction>
                   <ListItemIcon
                     onClick={() => deleteCategory(item)}
