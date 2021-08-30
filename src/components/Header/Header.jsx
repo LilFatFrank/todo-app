@@ -24,13 +24,19 @@ const Header = ({
           {["Urgent", "Important", "Later"].map((category, index) => (
             <IconButton
               onClick={() => addDefaultCategories(category)}
-              disabled={categoriesList.findIndex((c) => c === category) > -1}
+              disabled={
+                categoriesList.findIndex(
+                  (c) => c.toLowerCase() === category.toLowerCase()
+                ) > -1
+              }
               key={`${category}-${index}`}
             >
               <RenderIcons
                 label={category}
                 fill={
-                  categoriesList.findIndex((c) => c === category) > -1
+                  categoriesList.findIndex(
+                    (c) => c.toLowerCase() === category.toLowerCase()
+                  ) > -1
                     ? "#0b2533"
                     : ""
                 }
